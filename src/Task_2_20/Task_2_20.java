@@ -24,7 +24,7 @@ public class Task_2_20 {
             System.out.print(index + " ");
         }
 
-        System.out.println("");
+        System.out.println(" ");
 
         for (int index : array) {
             int count = 0;
