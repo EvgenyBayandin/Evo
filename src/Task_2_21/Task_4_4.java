@@ -12,9 +12,11 @@ public class Task_4_4 {
 
     public static void main(String[] args) {
 
+        // устанавливаем формат даты
         SimpleDateFormat inputFormat = new SimpleDateFormat("dd.MM.yyyy");
         SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd");
 
+        //Ввод даты и преобразование ее в строку
         Scanner in = new Scanner(System.in);
         System.out.print("Введите дату в формате 31.12.2020: ");
         String inputDate = in.nextLine();
