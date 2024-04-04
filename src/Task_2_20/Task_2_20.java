@@ -1,6 +1,8 @@
 package Task_2_20;
 
 import java.util.Random;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Task_2_20 {
     public static void main(String[] args) {
@@ -23,19 +25,17 @@ public class Task_2_20 {
         for (int index : array) {
             System.out.print(index + " ");
         }
-
         System.out.print("\n");
 
-        for (int index : array) {
-            int count = 0;
-            for (int i = 0; i < array.length; i++) {
-                if (array[i] == index) {
-                    count++;
-                }
-            }
-            if (count > 1) {
-                System.out.println("Число " + index + " встречается " + count + " раза");
+        Map<Integer, Integer> countMap = new HashMap<>();
+        for (int num : array) {
+            countMap.put(num, countMap.getOrDefault(num, 0) + 1);
+        }
 
+        for (Map.Entry<Integer, Integer> entry : countMap.entrySet()) {
+            if (entry.getValue() > 1) {
+                System.out.print("Число '" + entry.getKey() + "' встречается " + entry.getValue());
+                System.out.println(entry.getValue() >= 5 ? " раз" : " раза");
             }
         }
     }
