@@ -57,8 +57,9 @@ public class Task_2_19 {
 
         System.out.println("Результат целочисленного деления a на b = " + (a/b));
         System.out.println("Результат деления a на b с плавающей запятой = " + (float) a/b);
-        System.out.println("Результат деления a на b, округленное до ближайшего целого в большую сторону = " + (Math.ceilDiv(a,b)));
-        System.out.println("Результат деления a на b, округленное до ближайшего целого в меньшую сторону = " + (Math.floorDiv(a,b)));
+        System.out.println("Результат деления a на b, округленное до ближайшего целого в большую сторону = " + (int) (Math.ceil((double) a / b)));
+        System.out.println("Результат деления a на b, округленное до ближайшего целого в меньшую сторону = " + (int) (Math.floor(a / b)));
+        System.out.println("Результат деления a на b, округленного до ближайшего целого математическим округлением = " + ((a + b / 2) / b));
         System.out.println("Остаток от деления b на c = " + (b%c));
         System.out.println("Наименьшее значение из a и b = " + (Math.min(a,b)));
         System.out.println("Наибольшее значение из b и c = " + (Math.max(b,c)));
