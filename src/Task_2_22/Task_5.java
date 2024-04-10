@@ -32,14 +32,27 @@ public class Task_5 {
 
         //Ввод первой даты и преобразование ее в строку
         Scanner in = new Scanner(System.in);
-        System.out.print("Введите дату в формате 31.12.2020: ");
-        String inputDate = in.nextLine().trim();
-        Date date = new Date();
-        try {
-            date = inputFormat.parse(inputDate);
-        } catch (Exception e) {
-            System.out.println("Ошибка парсинга даты");
+        String inputDate = "";
+        Date date = null;
+        boolean isValidDate = false;
+        while (!isValidDate) {
+            try {
+                System.out.print("Введите дату в формате 31.12.2024: ");
+                inputDate = in.nextLine().trim();
+                date = inputFormat.parse(inputDate);
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(date);
+                int year = cal.get(Calendar.YEAR);
+                if (year < 2013 || year > 2099) {
+                    System.out.println("Некорректный год в введенной дате. Пожалуйста, введите дату с годом между 2013 и 2099.");
+                    continue;
+                }
+                isValidDate = true;
+            } catch (Exception e) {
+                System.out.println("Некорректный формат даты. Пожалуйста, введите дату в формате 31.12.2024.");
+            }
         }
+
 
         // Увеличение введенной даты на 45 календарных дней
         Calendar calendar = Calendar.getInstance();
@@ -54,13 +67,15 @@ public class Task_5 {
             System.out.println("Ошибка парсинга даты");
         }
 
+
         // Сдвигаем увеличенную на 45 календарных дней дату на начало года
         calendar.set(Calendar.DAY_OF_YEAR, 1);
         String firstDayOfYear = inputFormat.format(calendar.getTime());
         System.out.println("Дата сдвинута на начало года: " + firstDayOfYear);
 
-        // Увеличение сдвинутой на начало года даты на 10 рабочих дней
-        List<String> holidays = new ArrayList<>();
+
+        // Увеличение введенной даты на 10 рабочих дней
+        List<String> holidays = new ArrayList<>(); // начиная с 2013 по настоящее время
         holidays.add("01.01"); // Новогодние каникулы
         holidays.add("02.01"); // Новогодние каникулы
         holidays.add("03.01"); // Новогодние каникулы
@@ -81,6 +96,7 @@ public class Task_5 {
         // Увеличение даты на рабочие дни
         Date resultDate = addWorkingDays(date, workDaysToAdd, holidays);
         System.out.println("Дата после увеличения на " + workDaysToAdd + " рабочих дней: " + inputFormat.format(resultDate));
+
 
         // Посчитать количество рабочих дней (субботы и воскресенья - выходные) между первой и второй датами введенными с консоли и вывести на экран
         System.out.print("Введите вторую дату в формате 31.12.2020: ");
@@ -105,21 +121,20 @@ public class Task_5 {
         }
 
         int days = 0;
-        if (calendar.before(secondCalendar)) {
+        if (!calendar.after(secondCalendar)) {
             calendar.add(Calendar.DAY_OF_MONTH, 1);
             while (calendar.before(secondCalendar)) {
-                calendar.add(Calendar.DAY_OF_MONTH, 1);
                 int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
                 String firstDateStr = inputFormat.format(calendar.getTime());
                 boolean isHoliday = holidays.contains(firstDateStr);
                 if (dayOfWeek != Calendar.SATURDAY && dayOfWeek != Calendar.SUNDAY && !isHoliday) {
                     days++;
                 }
+                calendar.add(Calendar.DAY_OF_MONTH, 1);
             }
             System.out.println("Количество рабочих дней между введенными датами: " + days);
             in.close();
         }
-
     }
 
     private static Date addWorkingDays(Date date, int daysToAdd, List<String> holidays) throws Exception {
@@ -142,7 +157,6 @@ public class Task_5 {
                 workDaysAdded++;
             }
         }
-
         return calendar.getTime();
     }
 
