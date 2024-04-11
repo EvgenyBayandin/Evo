@@ -37,7 +37,7 @@ public class Task_5 {
         boolean isValidDate = false;
         while (!isValidDate) {
             try {
-                System.out.print("Введите дату в формате 31.12.2024: ");
+                System.out.print("Введите дату в формате dd.MM.yyyy: ");
                 inputDate = in.nextLine().trim();
                 date = inputFormat.parse(inputDate);
                 Calendar cal = Calendar.getInstance();
@@ -71,11 +71,12 @@ public class Task_5 {
         // Сдвигаем увеличенную на 45 календарных дней дату на начало года
         calendar.set(Calendar.DAY_OF_YEAR, 1);
         String firstDayOfYear = inputFormat.format(calendar.getTime());
-        System.out.println("Дата сдвинута на начало года: " + firstDayOfYear);
+        System.out.println("Дата после сдвига на начало года: " + firstDayOfYear);
 
 
         // Увеличение введенной даты на 10 рабочих дней
-        List<String> holidays = new ArrayList<>(); // начиная с 2013 по настоящее время
+        // Создаем справочник праздничных нерабочих дней, начиная с 2013 по настоящее время в формате "dd.MM"
+        List<String> holidays = new ArrayList<>();
         holidays.add("01.01"); // Новогодние каникулы
         holidays.add("02.01"); // Новогодние каникулы
         holidays.add("03.01"); // Новогодние каникулы
@@ -99,44 +100,38 @@ public class Task_5 {
 
 
         // Посчитать количество рабочих дней (субботы и воскресенья - выходные) между первой и второй датами введенными с консоли и вывести на экран
-        System.out.print("Введите вторую дату в формате 31.12.2020: ");
-        String secondInputDate = in.nextLine().trim();
-        date = inputFormat.parse(inputDate);
-        calendar.setTime(date);
-        Calendar secondCalendar = Calendar.getInstance();
-        Date secondDate = new Date();
-        try {
-            secondDate = inputFormat.parse(secondInputDate);
-        } catch (Exception e) {
-            System.out.println("Ошибка парсинга даты");
-        }
-        secondCalendar.setTime(secondDate);
-
-        try {
-            if(secondDate.before(date) || secondDate.equals(date)) {
-                throw new Exception("Вторая дата должна быть позднее " + inputFormat.format(date));
-            }
-        } catch (Exception exception){
-            System.out.println(exception.getMessage());
-        }
-
-        int days = 0;
-        if (!calendar.after(secondCalendar)) {
-            calendar.add(Calendar.DAY_OF_MONTH, 1);
-            while (calendar.before(secondCalendar)) {
-                int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
-                String firstDateStr = inputFormat.format(calendar.getTime());
-                boolean isHoliday = holidays.contains(firstDateStr);
-                if (dayOfWeek != Calendar.SATURDAY && dayOfWeek != Calendar.SUNDAY && !isHoliday) {
-                    days++;
+        String secondInputDate = "";
+        Date secondDate = null;
+        Calendar cal = new GregorianCalendar();
+        isValidDate = false;
+        while (!isValidDate) {
+            try {
+                System.out.print("Введите вторую дату в формате dd.MM.yyyy: ");
+                secondInputDate = in.nextLine().trim();
+                secondDate = inputFormat.parse(secondInputDate);
+                cal = Calendar.getInstance();
+                cal.setTime(secondDate);
+                int year = cal.get(Calendar.YEAR);
+                if (secondDate.before(date) || secondDate.equals(date)) {
+                    System.out.println("Введенная дата должна быть позднее " + inputFormat.format(date));
+                    continue;
+                } else if (year < 2013 || year > 2099) {
+                    System.out.println("Некорректный год в введенной дате. Пожалуйста, введите дату с годом между 2013 и 2099.");
+                    continue;
                 }
-                calendar.add(Calendar.DAY_OF_MONTH, 1);
+                isValidDate = true;
+            } catch (Exception e) {
+                System.out.println("Некорректный формат даты. Пожалуйста, введите дату в формате 31.12.2024.");
             }
-            System.out.println("Количество рабочих дней между введенными датами: " + days);
-            in.close();
         }
+        // Подсчет рабочих дней между двумя датами
+        int workDaysBetween = countWorkingDays(date, secondDate, holidays);
+        System.out.println("Количество рабочих дней между введенными датами: " + workDaysBetween);
+        in.close();
     }
 
+
+    // Метод для добавления рабочих дней
     private static Date addWorkingDays(Date date, int daysToAdd, List<String> holidays) throws Exception {
         SimpleDateFormat sdf = new SimpleDateFormat("dd.MM");
         Calendar calendar = new GregorianCalendar();
@@ -151,13 +146,40 @@ public class Task_5 {
             String currentDateStr = sdf.format(currentDate);
             boolean isHoliday = holidays.contains(currentDateStr);
 
-            // Проверяем, является ли текущий день субботой или воскресеньем
+            // Проверяем, является ли текущий день субботой, воскресеньем или праздником
             int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
             if (dayOfWeek != Calendar.SATURDAY && dayOfWeek != Calendar.SUNDAY && !isHoliday) {
                 workDaysAdded++;
             }
         }
         return calendar.getTime();
+    }
+
+
+    // Метод для подсчета рабочих дней между двумя датами
+    private static int countWorkingDays(Date startDate, Date endDate, List<String> holidays) {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd.MM");
+        Calendar calendar = new GregorianCalendar();
+        calendar.setTime(startDate);
+        int workDays = 0;
+        if (!calendar.getTime().after(endDate)) {
+            calendar.add(Calendar.DAY_OF_MONTH, 1);
+            while (calendar.getTime().before(endDate)) {
+                Date currentDate = calendar.getTime();
+
+                // Проверяем, является ли текущий день нерабочим праздничным днем
+                String currentDateStr = sdf.format(currentDate);
+                boolean isHoliday = holidays.contains(currentDateStr);
+
+                // Проверяем, является ли текущий день субботой, воскресеньем или праздником
+                int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
+                if (dayOfWeek != Calendar.SATURDAY && dayOfWeek != Calendar.SUNDAY && !isHoliday) {
+                    workDays++;
+                }
+                calendar.add(Calendar.DAY_OF_YEAR, 1);
+            }
+        }
+        return workDays;
     }
 
 }
