@@ -100,9 +100,9 @@ public class Task_5 {
 
 
         // Посчитать количество рабочих дней (субботы и воскресенья - выходные) между первой и второй датами введенными с консоли и вывести на экран
-        String secondInputDate = "";
+        String secondInputDate;
         Date secondDate = null;
-        Calendar cal = new GregorianCalendar();
+        Calendar cal;
         isValidDate = false;
         while (!isValidDate) {
             try {
@@ -132,7 +132,7 @@ public class Task_5 {
 
 
     // Метод для добавления рабочих дней
-    private static Date addWorkingDays(Date date, int daysToAdd, List<String> holidays) throws Exception {
+    private static Date addWorkingDays(Date date, int daysToAdd, List<String> holidays) {
         SimpleDateFormat sdf = new SimpleDateFormat("dd.MM");
         Calendar calendar = new GregorianCalendar();
         calendar.setTime(date);
